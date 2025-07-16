@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Node",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "types": ["node", "fastify"],
+    "baseUrl": "./src",
+    "paths": {
+      "@features/*": ["features/*"],
+      "@langgraph/*": ["langgraph/*"],
+      "@shared-types/*": ["types/*"],
+      "@plugins/*": ["plugins/*"],
+      "@utils/*": ["utils/*"]
+    }
+  },
+  "include": ["./src/**/*", ".src/types/**/*"]
+}
