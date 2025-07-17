@@ -1,5 +1,5 @@
-api:
-    cd api && just dev
-
 ui:
-    cd ui && pnpm run dev
+    cd gaiia && just dev
+
+supabase:
+    cd ops && just start-supabase

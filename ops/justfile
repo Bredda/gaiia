@@ -1,0 +1,2 @@
+start-supabase:
+    npx supabase start
