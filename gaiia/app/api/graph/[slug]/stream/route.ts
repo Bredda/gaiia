@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getGraphBySlug } from "@/lib/graph/get-graph-from-slug";
-import { UpdateEvent, ErrorEvent } from "@/lib/graph/event-types";
+import { UpdateEvent, ErrorEvent, TokenEvent } from "@/lib/graph/event-types";
 
 export const runtime = "edge"; // ou "nodejs" selon ton besoin SSE
 
@@ -13,6 +13,28 @@ export async function POST(
   console.log("Graph stream started with body:", input);
   const crtl = new AbortController();
   const { graph, defaultConfig, streamingNodeTags } = getGraphBySlug(slug);
+
+  function sendTokenEvent(
+    controller: ReadableStreamDefaultController<any>,
+    encoder: TextEncoder,
+    event: Omit<TokenEvent, "type">
+  ) {
+    controller.enqueue(
+      encoder.encode(`data: ${JSON.stringify({ type: "token", ...event })}\n\n`)
+    );
+  }
+
+  function sendUpdateEvent(
+    controller: ReadableStreamDefaultController<any>,
+    encoder: TextEncoder,
+    event: Omit<UpdateEvent, "type">
+  ) {
+    controller.enqueue(
+      encoder.encode(
+        `data: ${JSON.stringify({ type: "update", ...event })}\n\n`
+      )
+    );
+  }
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -35,14 +57,10 @@ export async function POST(
               continue; // Ignore empty messages
 
             if (messageChunk.text) {
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    type: "token",
-                    token: messageChunk.text,
-                  })}\n\n`
-                )
-              );
+              sendTokenEvent(controller, encoder, {
+                token: messageChunk.text,
+                tags: metadata.tags,
+              });
             }
           } else if (chunk[0] === "updates") {
             const eventData = chunk[1];
@@ -55,12 +73,11 @@ export async function POST(
 
             if (!nodePayload.events || nodePayload.events.length === 0)
               continue;
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify(
-                  nodePayload.events[0] as UpdateEvent
-                )}\n\n`
-              )
+
+            sendUpdateEvent(
+              controller,
+              encoder,
+              nodePayload.events[0] as UpdateEvent
             );
           }
         }

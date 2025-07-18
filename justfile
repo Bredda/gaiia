@@ -1,5 +1,5 @@
 ui:
-    cd gaiia && just dev
+    cd gaiia && npm i && npm run dev
 
 supabase:
     cd ops && just start-supabase

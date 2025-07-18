@@ -13,13 +13,7 @@ import { verifyClaimsLlm } from "./nodes/verifyClaimsLlm";
 import { verifyClaimsWeb } from "./nodes/verifyClaimsWeb";
 import { StreamEvent } from "@/lib/graph/event-types";
 import { RunnableConfig } from "@langchain/core/runnables";
-
-const arrayReducer = <T>(left: T[], right: T[]) => left.concat([...right]);
-const defaultArray = <T>() => [] as T[];
-const arrayOptions = {
-  reducer: arrayReducer,
-  default: defaultArray,
-};
+import { arrayStateReducer } from "@/lib/graph/state-utils";
 
 export type ClarifaiStreamInput = {
   content: string;
@@ -28,12 +22,12 @@ export type ClarifaiStreamInput = {
 const ClarifyAnnotation = Annotation.Root({
   content: Annotation<string>(), // Initial input from caller
   cleanedContent: Annotation<string>(), // Cleaned content after preprocessing
-  segments: Annotation<ExtractedSegment[]>(arrayOptions), // Segments of the content
-  extractedBiases: Annotation<ExtractedBias[]>(arrayOptions), // Biases detected in the content
-  extractedClaims: Annotation<ExtractedClaim[]>(arrayOptions), // Claims extracted from the content
-  verifiedClaims: Annotation<ExtractedVerifiedClaim[]>(arrayOptions), // Model used for claims verification
+  segments: Annotation<ExtractedSegment[]>(arrayStateReducer), // Segments of the content
+  extractedBiases: Annotation<ExtractedBias[]>(arrayStateReducer), // Biases detected in the content
+  extractedClaims: Annotation<ExtractedClaim[]>(arrayStateReducer), // Claims extracted from the content
+  verifiedClaims: Annotation<ExtractedVerifiedClaim[]>(arrayStateReducer), // Model used for claims verification
   report: Annotation<string>(), // Final answer to the query
-  events: Annotation<StreamEvent[]>(arrayOptions), // Event for ui display
+  events: Annotation<StreamEvent[]>(arrayStateReducer), // Event for ui display
 });
 
 export const ClarifaiConfigurableAnnotation = Annotation.Root({

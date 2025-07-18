@@ -3,7 +3,7 @@ import { StreamEvent, ErrorEvent } from "./event-types";
 
 interface GraphRunnerOptions {
   slug: string;
-  onToken?: (token: string) => void;
+  onToken?: (token: string, tags: string[]) => void;
   onUpdate?: (step: string, eventPayload: unknown) => void;
   onComplete?: () => void;
   onError?: (event: ErrorEvent | Error) => void;
@@ -50,7 +50,7 @@ export function createGraphRunner<Input>(options: GraphRunnerOptions) {
           const data: StreamEvent = JSON.parse(ev.data);
           switch (data.type) {
             case "token":
-              options.onToken?.(data.token);
+              options.onToken?.(data.token, data.tags);
               break;
             case "update":
               options.onUpdate?.(data.step, data.payload);

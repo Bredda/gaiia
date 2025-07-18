@@ -48,10 +48,16 @@ export const APP_FEATURES: AppFeature[] = [
     url: "/ai-got-beef",
     menus: [
       {
-        id: "home",
+        id: "ai-got-beef-home",
         name: "Home",
         icon: Home,
         url: "/ai-got-beef",
+      },
+      {
+        id: "ai-got-beef-run",
+        name: "Run",
+        icon: Play,
+        url: "/ai-got-beef/run",
       },
     ],
   },

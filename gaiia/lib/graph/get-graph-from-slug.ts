@@ -1,3 +1,4 @@
+import { aiGtoBeefGraphMetadata } from "@/app/(features)/ai-got-beef/ai/graph";
 import { clarifaiGraphMetadata } from "@/app/(features)/clarifai/ai/graph";
 import { CompiledStateGraph } from "@langchain/langgraph";
 
@@ -13,6 +14,7 @@ export type GraphMetadata = {
 
 const GRAPH_MAP: Record<string, GraphMetadata> = {
   clarifai: clarifaiGraphMetadata,
+  "ai-got-beef": aiGtoBeefGraphMetadata,
 };
 
 /**
